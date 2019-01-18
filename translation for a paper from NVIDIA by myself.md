@@ -74,3 +74,30 @@ However, if voxels are considerably larger due to undersampling, the approximati
 。。。
 
 To reduce the approximation error, we constrain the spatial extent of each voxel by intersecting it with a pair of parallel planes matching the orientation of approximated surface.  
+为了减少近似错误，我们通过使用一对与近似表面符合的平行面横截体素来限制体素空间  
+We refer to such a pair of planes as a contour  
+The result is a collection of oriented slabs that define a tight bounding volume for the surface, as illustrated in the bottom row of Figure 4.  
+结果是一堆给表面定义了一个紧密边界体积的定向的片， 如图4  
+For flat and relatively smooth surfaces, the planes can be oriented with the average surface normal to obtain a good fit.  
+对于平坦或相对光滑的表面， 平面通过平均表面法向来定向以获得更好的结果  
+For curved and undersampled surfaces, the planes can still be used to reduce the approximation error, as can be seen in Figure 5.  
+对于弯曲和欠采样的表面， 平面仍能被用来减少近似错误， 可以在图5看到  
+。。。
+
+We use 32 bits to store the contour corresponding to one voxel.  
+我们使用32位来存储一个体素的轮廓  
+The value is divided into five components: three 6-bit integers to define the normal vector of the two planes, and two 7-bit integers to define their positions within the voxel.  
+值被分为5个部分：三个6位整形来定义两个平面的法向量，两个7位整形来定义在体素中的位置。  
+
+The mapping between voxels and their corresponding contours is established by two fields in the child descriptor(Figure 2).  
+体素和他们相对应的轮廓间的映射是建立在子描述符中的两个域里(图 2).  
+contour mask is an 8-bit mask telling whether the voxel in each child slot has an associated contour.  
+轮廓掩码是一个8位的掩码 描述子空间中的体素有一个相关的轮廓  
+Storing a separate bitmask allows omitting contours in voxels where they do not significantly reduce the approximation error.  
+存储一个分开的位掩码允许允许省略部分体素的轮廓，这些体素不会显著地减少近似错误  
+Similar to the child pointer, the unsigned 24-bit contour pointer reference a list of consecutive contour values, one for each bit in contour mask is set.  
+与子指针相似， 这个无符号24位轮廓指针指向一个连续的轮廓值列表， 。。。
+
+### 3.3 Cooperation Between Contours
+### 3.3 轮廓之间的协同
+
