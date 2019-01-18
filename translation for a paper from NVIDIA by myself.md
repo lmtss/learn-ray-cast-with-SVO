@@ -101,3 +101,58 @@ Similar to the child pointer, the unsigned 24-bit contour pointer reference a li
 ### 3.3 Cooperation Between Contours
 ### 3.3 轮廓之间的协同
 
+While using only one contour per leaf voxel would be enough to represent smooth surfaces, it would also introduce distracting artifacts near sharp edges of objects.  
+当仅仅为一个叶子体素使用一个轮廓时能足够的表述顺滑的表面， 而在物体的锐利边缘附近则会产生wtf的渲染不正确。  
+This is because the orientation of the surface varies a lot within voxels containing such an edge,  and no single orientation can be chosen as a good representative for all the points on the surface.  
+这是因为当体素包含这样一个边时表面的方向变化太多， 没有一个方向能被选为一个好的代表对表面上的所有点来说  
+
+Fortunately, we can utilize the fact that we are storing a full hierarchy of overlapping voxels.  
+幸运地， 我们能利用我们存储了一个完全层次化的体素结构这件事  
+To enable cooperation between multiple contours, we define the final shape of a voxel as the intersection of its cube with all the contours of its ancestors.  
+为了让多个体素协作， 我们定义了一个体素的最终形状作为 ...
+
+### 3.4 Construction of Contours
+### 3.4 轮廓的结构
+
+### 3.5 Shading Attributes
+### 3.5 着色属性
+
+## 4 Rendering
+The regularity of the octree data structure is the key factor in enabling efficient ray casts.  
+八叉树数据结构的规律性是高效光线投射起效的关键因素。  
+As most of the data associated with a voxel is actually stored within its parent, we need to express the current voxel using its parent voxel parent and a child slot index idx ranging from 0 to 7.  
+因为大多数与一个体素相关的数据实际上存储在他的父亲处， 我们需要使用他的父亲体素parent和一个子空间索引idx(0 to 7)表示当前体素。  
+Since we do not store information about the spatial location of voxels, we also need to maintain a cube corresponding to the current voxel.  
+既然我们没有存储关于体素位置的信息， 我们也需要维护一个与当前体素一致的cube  
+The cube is expressed using position vector pos ranging from 0 to 1 in each dimension, and a non-negative integer scale that defines the extent of the cube as exp2(scale − smax).  
+这个cube被使用每一维一个0到1的位置向量， 一个表示大小程度的非负整数来描述  
+The entire octree is contained within a cube of scale smax positioned at the origin.  
+整个八叉树被包含在一个最大尺度的在origin的cube中  
+<strong>Basics.</strong>  
+<strong>基本的.</strong>  
+<strong>Hierarchy traversal.</strong>We will now extend the idea of incremental traversal to a hierarchy of voxels.  
+<strong>层次遍历.</strong>我们现在要对一个层次化的体素结构延展增量遍历的想法  
+This is necessary since our octree data structure is sparse in the sense that we do not include the subtrees corresponding to empty space.  
+这是必要的既然我们的八叉树数据结构在场景中是稀疏的，我们不包括表示空的子树  
+Doing the traversal in a hierarchical fashion also has the benefit of being able to improve the performance by using contours as bounding volumes of their corresponding subtrees.  
+以层次的风格遍历也有好处，改进以轮廓作为他们对应子树的包围盒的表现。  
+
+Our algorithm traverses the set of voxels intersected by the ray in depth-first order.  
+我们的算法深度优先遍历被光线横截的体素集合  
+In each iteration, there are three distinct cases for selecting the next voxel:  
+在每一次迭代， 有三种限制情况来选择下一个体素：  
+∙ PUSH: Proceed to the child voxel that the ray enters first.处理光线第一个进入的子体素  
+∙ ADVANCE: Proceed to the next sibling voxel.处理下一个兄弟体素  
+∙ POP: Otherwise, proceed to the next sibling of the highest ancestor that the ray exits.否则，处理此光线存在的最远祖先的下一个兄弟  
+
+The algorithm incorporates a stack of parent voxels and contour t values associated with the ancestors of the current voxel.  
+算法维护了一个父体素栈。。。  
+The depth of the stack is smax, making it possible to address its entries directly using cube scale values.  
+这个栈的深度为smax， 使他能直接用cube的比例值来寻址  
+Whenever the algorithm descends the hierarchy by executing PUSH, it potentially stores the previous parent into the stack at scale based on a conservative check.  
+无论算法何时按照层次下降通过执行PUSH， 它都潜在地存储过去的父亲。。。  
+When the ray exits the current parent voxel, the algorithm ascends the hierarchy by executing POP.  
+当光线离开当前父体素， 算法上升层次通过执行POP 
+It first uses the current position pos to determine the new pos′, scale′, and idx′ as described below. It then reads the stack at scale′ to restore the previous parent.  
+它先按照上面描述的方法用当前位置pos决定新的pos′, scale′, idx′。然后读取在scale′处的栈元素来恢复过去的父亲  
+
