@@ -1,5 +1,5 @@
 # 仅为学习
-人工翻译英伟达的一篇[论文](https://www.nvidia.com/docs/IO/88889/laine2010i3d_paper.pdf)  
+人工翻译一篇[论文](https://www.nvidia.com/docs/IO/88889/laine2010i3d_paper.pdf)  
 缓慢更新
 
 ## 3Voxel Data Structure
