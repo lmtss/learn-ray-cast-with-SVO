@@ -1,0 +1,20 @@
+网上找到的一篇关于可动体素八叉树的[论文](http://masters.donntu.org/2012/fknt/radchenko/library/asvo.pdf)
+
+## 3 Animating SVOs
+## 3 可动的SVOs
+Triangle meshes consist of vertices (points). Connected via lines they form triangles. Triangles are chosen because they are the simplest 3D structure.  
+三角形网格由顶点组成。通过线连起来就形成了三角形。三角形因为是最简单的3D结构而被选择。 
+
+This is not possible for SVOs because they are rigid: Every node's coordinates are derived by its position inside the octree hierarchy and the octree's mininum and maximum vector. The nodes themselves do not store any position/orientation that could be altered by simulated physical forces or other means of transformation. The only "real" ways of transforming voxel octrees are the ones described in chapter 1.4. Both are unsuitable for real-time applications.  
+这对于太过静态的SVOs是不可能的：每个节点坐标由他在八叉树中的层次位置和八叉树的最小最大向量来产生。节点自身没有存储任何能被模拟物理力或其他变形方式改变的位置/方向信息。唯一真实的使八叉树变形的方式在1.4章被描述。都不是对于实时应用适合的方法。  
+
+### 3.1 The core idea of animating sparse voxel octrees  
+1.Treat every node of a SVO like an atom; a rigid, axis-aligned cuboid; that can be transformed independently from all other nodes inside the octree.  
+2.Apply the transformation to each node during the rendering phase, when the node's final screen position is computed on the fly anyway.  
+This is the general concept. Two examples of its application follow.  
+### 3.1 可动体素八叉树的核心思路
+1.像处理原子一样处理每一个SVO的节点；能与八叉树中的其他节点独立地变形  
+2.在渲染阶段对每一个节点应用变形，  
+这是普遍的概念。下面有两个应用例子。  
+### 3.2 Rotation
+Figure 4 (left) shows a SVO representing a 3D model. 2D quadtrees are used for simplicity but the principles shown are valid for 3D octrees as well.  
