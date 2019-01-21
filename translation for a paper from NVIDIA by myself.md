@@ -109,7 +109,7 @@ This is because the orientation of the surface varies a lot within voxels contai
 Fortunately, we can utilize the fact that we are storing a full hierarchy of overlapping voxels.  
 幸运地， 我们能利用我们存储了一个完全层次化的体素结构这件事  
 To enable cooperation between multiple contours, we define the final shape of a voxel as the intersection of its cube with all the contours of its ancestors.  
-为了让多个体素协作， 我们定义了一个体素的最终形状作为 ...
+为了让多个体素协作， 我们定义体素的最终形状为这个它的立方体与所有其祖先轮廓的横截  。。。  
 
 ### 3.4 Construction of Contours
 ### 3.4 轮廓的结构
@@ -155,4 +155,9 @@ When the ray exits the current parent voxel, the algorithm ascends the hierarchy
 当光线离开当前父体素， 算法上升层次通过执行POP 
 It first uses the current position pos to determine the new pos′, scale′, and idx′ as described below. It then reads the stack at scale′ to restore the previous parent.  
 它先按照上面描述的方法用当前位置pos决定新的pos′, scale′, idx′。然后读取在scale′处的栈元素来恢复过去的父亲  
+
+Determining the child voxel that the ray enters first in the case of PUSH is similar to selecting the next sibling in ADVANCE.  
+决定PUSH中光线第一个进入的子体素与ADVANCE中选择下一个兄弟体素相似  
+We evaluate tx, ty, and tz at the center of the voxel and compare them against tcmin to determine each bit of the new idx′.  
+我们估计体素中心的tx，ty，tz并将他们与tcmin比较来决定idx‘的每一位  
 
