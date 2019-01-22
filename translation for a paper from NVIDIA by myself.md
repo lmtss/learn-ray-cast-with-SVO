@@ -109,10 +109,18 @@ This is because the orientation of the surface varies a lot within voxels contai
 Fortunately, we can utilize the fact that we are storing a full hierarchy of overlapping voxels.  
 幸运地， 我们能利用我们存储了一个完全层次化的体素结构这件事  
 To enable cooperation between multiple contours, we define the final shape of a voxel as the intersection of its cube with all the contours of its ancestors.  
-为了让多个体素协作， 我们定义体素的最终形状为这个它的立方体与所有其祖先轮廓的横截  。。。  
+为了让多个体素协作， 我们定义体素的最终形状为它的立方体与所有其祖先轮廓的横截  。。。  
 
 ### 3.4 Construction of Contours
-### 3.4 轮廓的结构
+### 3.4 轮廓的构建
+To simplify the task of approximating a given surface with contours, we observe that the result does not necessarily need to be smooth.  
+为了简化使用轮廓来近似表面的任务，我们注意到，结果不一定是光滑的   
+As long as we ensure that the original surface is fully enclosed by each contour, we are guaranteed to get an approximation that contains no holes.  
+一旦我们确保各个轮廓充分地接近原表面，那一定是获得一个无孔的近似  
+While discontinuities at voxel boundaries may introduce problems such as false self-shadowing or interreflections in ray tracing, these can be usually worked around by offsetting the starting positions of secondary rays by a small amount.  
+在体素边界的不连续可能带来问题，例如在光线追踪中的错误自阴影或互相反射，。。。  
+Thus, the construction process can be defined in terms of minimizing the spatial extent of each voxel, regardless of its neighbors.  
+...  
 
 ### 3.5 Shading Attributes
 ### 3.5 着色属性
@@ -161,3 +169,5 @@ Determining the child voxel that the ray enters first in the case of PUSH is sim
 We evaluate tx, ty, and tz at the center of the voxel and compare them against tcmin to determine each bit of the new idx′.  
 我们估计体素中心的tx，ty，tz并将他们与tcmin比较来决定idx‘的每一位  
 
+To differentiate between ADVANCE and POP, we need to find out whether the ray stays within the same parent voxel.  
+为了区分ADVANCE和POP，我们需要判断是否停留在同一父体素  
