@@ -136,8 +136,16 @@ The cube is expressed using position vector pos ranging from 0 to 1 in each dime
 这个cube被使用每一维一个0到1的位置向量， 一个表示大小程度的非负整数来描述  
 The entire octree is contained within a cube of scale smax positioned at the origin.  
 整个八叉树被包含在一个最大尺度的在origin的cube中  
-<strong>Basics.</strong>  
-<strong>基本的.</strong>  
+<strong>Basics.</strong>Let our ray be defined as pt(t) = p+td. Solving t for an axis-aligned plane gives tx(x) = (1/dx)x+ (−px/dx) for the x-axis, and similar formulas for the y and z axes.  
+<strong>基本的.</strong>将光线定义为Pt(t)=P+td。 使用tx(x) = (1/dx)x+ (−px/dx)计算x轴一个轴平行平面的t，y和z轴的公式是相似的   
+With precomputed ray coefficients this amounts to a single multiply-add instruction per axis.  
+
+We can represent an axis-aligned cube as a pair of opposite corners (x0, y0,z0) and (x1, y1,z1) so that tx(x0) ≤ tx(x1), ty(y0) ≤ ty(y1),and tz(z0) ≤ tz(z1).   
+我们能将一个立方体表示为一对对角(x0, y0,z0) 和 (x1, y1,z1)使得tx(x0) ≤ tx(x1), ty(y0) ≤ ty(y1)并且 tz(z0) ≤ tz(z1).  
+Using this definition, the span of t-values intersected by the cube is given by tcmin = max(tx(x0),ty(y0),tz(z0)) and tcmax = min(tx(x1),ty(y1),tz(z1)).   
+
+Traversing voxels along the ray, we can determine the next voxel of the same scale by comparing tx(x1), ty(y1), and tz(z1) against tcmax and advancing the cube position along each axis for which the values are equal.   
+沿光线遍历体素，我们能通过比较tx(x1), ty(y1), tz(z1)和tcmax来决定同尺寸的下一个体素
 <strong>Hierarchy traversal.</strong>We will now extend the idea of incremental traversal to a hierarchy of voxels.  
 <strong>层次遍历.</strong>我们现在要对一个层次化的体素结构延展增量遍历的想法  
 This is necessary since our octree data structure is sparse in the sense that we do not include the subtrees corresponding to empty space.  
@@ -170,4 +178,10 @@ We evaluate tx, ty, and tz at the center of the voxel and compare them against t
 我们估计体素中心的tx，ty，tz并将他们与tcmin比较来决定idx‘的每一位  
 
 To differentiate between ADVANCE and POP, we need to find out whether the ray stays within the same parent voxel.  
-为了区分ADVANCE和POP，我们需要判断是否停留在同一父体素  
+为了区分ADVANCE和POP，我们需要判断光线是否停留在同一父体素  
+We start by assuming that it does, and compute candidate position pos∗ and child slot index idx∗.  
+我们先假设是，并计算候补位置pos* 和子空间索引idx*   
+We then check whether the resulting idx∗ is actually valid considering the direction of the ray.  
+然后我们根据光线的方向判断idx* 是否是无效的   
+As described previously, we obtain idx∗ by flipping one or more bits of idx, each corresponding to an axis-aligned plane crossed by the ray.  
+如前所述，我们获得
