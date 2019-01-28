@@ -145,7 +145,9 @@ We can represent an axis-aligned cube as a pair of opposite corners (x0, y0,z0) 
 Using this definition, the span of t-values intersected by the cube is given by tcmin = max(tx(x0),ty(y0),tz(z0)) and tcmax = min(tx(x1),ty(y1),tz(z1)).   
 
 Traversing voxels along the ray, we can determine the next voxel of the same scale by comparing tx(x1), ty(y1), and tz(z1) against tcmax and advancing the cube position along each axis for which the values are equal.   
-沿光线遍历体素，我们能通过比较tx(x1), ty(y1), tz(z1)和tcmax来决定同尺寸的下一个体素
+沿光线遍历体素，我们能通过比较tx(x1), ty(y1), tz(z1)和tcmax来决定同尺寸的下一个体素  
+Assuming that the two voxels share the same parent, we obtain the new child slot index idx′ by flipping the bits of idx corresponding to the same axes.  
+假设两个体素分享同一父亲，我们  
 <strong>Hierarchy traversal.</strong>We will now extend the idea of incremental traversal to a hierarchy of voxels.  
 <strong>层次遍历.</strong>我们现在要对一个层次化的体素结构延展增量遍历的想法  
 This is necessary since our octree data structure is sparse in the sense that we do not include the subtrees corresponding to empty space.  
@@ -182,6 +184,17 @@ To differentiate between ADVANCE and POP, we need to find out whether the ray st
 We start by assuming that it does, and compute candidate position pos∗ and child slot index idx∗.  
 我们先假设是，并计算候补位置pos* 和子空间索引idx*   
 We then check whether the resulting idx∗ is actually valid considering the direction of the ray.  
-然后我们根据光线的方向判断idx* 是否是无效的   
+然后我们根据光线的方向判断idx* 是否是有效的   
 As described previously, we obtain idx∗ by flipping one or more bits of idx, each corresponding to an axis-aligned plane crossed by the ray.  
-如前所述，我们获得
+如前所述，我们通过翻转一个或以上的idx二进制位来获得idx* ，每一位都与一个被光线穿过的轴对齐平面相关  
+For idx∗ to be valid, the direction of the flips must agree with sign of the corresponding component of ray direction d.  
+  
+For example if dx > 0, the bit corresponding to the x-axis is only allowed to increase.   
+比如dx大于0，那么对应x轴的位必须是增加的  
+If all of the flips agree with the ray direction, we execute ADVANCE by using pos∗ and idx∗ as the new pos′ and idx′, respectively.  
+如果所有的翻转和光线方向相符合，我们使用pos* idx* 作为新的pos和idx来执行ADVANCE，  
+If we encounter any conflicting flips, we proceed with POP.  
+如果我们遇到了矛盾的翻转，我们使用POP  
+
+In the case of POP, we can determine the next voxel by looking at the bit representations of pos and pos∗
+如果是POP，我们能观察pos和pos* 的位表示来决定下一个体素  
